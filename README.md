@@ -9,8 +9,10 @@ This bloom filter was developed to strengthen a website-log database and was tes
 Nonetheless bloom should work with any other form of entries. 
 
 provides 32bit and 64bit boolsets for smaller or larger entry volumes. 
-32bit - bloom' s hash function is Berkeley DB smdb hash (slightly modified to optimize for smaller bitsets len<=4096). smdb <--- http://www.cse.yorku.ca/~oz/hash.html
-64bit - bloom' s hash function is go's generic FNV64a hash 
+
+32bit - bloom: hash function is Berkeley DB smdb hash (slightly modified to optimize for smaller bitsets len<=4096). smdb <--- http://www.cse.yorku.ca/~oz/hash.html
+
+64bit - bloom: hash function is go's generic FNV64a hash 
 
 ###install
 
@@ -65,4 +67,12 @@ Json := bf.JSONMarshal()
 bf = JSONUnmarshal(Json)
 ```
 
-to work with the bloom filter
+to work with the bloom filter.
+
+### why 'fast'? 
+
+It's about 3 times faster than William Fitzgeralds real bitset bloom filter https://github.com/willf/bloom . (on MBPro15 OSX10.8.5 i7 2.4Ghz: bf.Add 91ns/op, bf.Has 102ns/op)
+
+This comes at the cost of 8times greater memory usage for the 'bit'-set which is basically a []bool slice (even if it could be stored in smaller []uint8 JSON-Object). 
+
+With 32bit bloom filters (bloom32) using smdb, bloom32 does hashing with only 2 bit shifts, one xor and one substraction per byte. smdb is about as fast as fnv64a but gives less collisions with the dataset (see mask above). bloom.New(float64(10 * 1<<16),float64(7)) populated with 1<<16 random items from the dataset (see above) and tested against the rest results in less than 0.05% collisions.   
