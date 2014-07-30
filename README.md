@@ -84,7 +84,7 @@ This comes at the cost of 8times greater memory usage for the 'bit'-set which is
 	github.com/cabello/bloom 'Add' 65536 items (10 repetitions): 131921507 ns (2012 ns/op)
 	github.com/cabello/bloom 'Contains' 65536 items (10 repetitions): 131108962 ns (2000 ns/op)
 
-(on MBPro15 OSX10.8.5 i7 2.4Ghz: bf.Add 91ns/op, bf.Has 102ns/op)
+(on MBPro15 OSX10.8.5 i7 4Core 2.4Ghz)
 
 
 With 32bit bloom filters (bloom32) using smdb, bloom32 does hashing with only 2 bit shifts, one xor and one substraction per byte. smdb is about as fast as fnv64a but gives less collisions with the dataset (see mask above). bloom.New(float64(10 * 1<<16),float64(7)) populated with 1<<16 random items from the dataset (see above) and tested against the rest results in less than 0.05% collisions.   
