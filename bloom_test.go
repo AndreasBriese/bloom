@@ -22,7 +22,7 @@ func Test_New(t *testing.T) {
 		locs := 1
 
 		Convey("When created bf", func() {
-			bf := New(n, locs)
+			bf := New(float64(n), float64(locs))
 
 			Convey("bf should be {[false false false false false false false false false false false false false false false false] 4 15 1 28}", nil)
 			So(fmt.Sprint(bf), ShouldEqual, "{[false false false false false false false false false false false false false false false false] 4 15 1 28}")
@@ -46,7 +46,7 @@ func Test_New(t *testing.T) {
 func Test_JSONMarschal_JSONUnmarshal(t *testing.T) {
 
 	Convey("When created bf(64,1) and populated with 10 words and bf.JSONMarshal", t, func() {
-		bf := New(64, 1)
+		bf := New(float64(64), float64(1))
 		w := []byte{100, 200, 130}
 		for i := 0; i < 10; i++ {
 			w = append(w, byte((i+1)*10))
@@ -71,9 +71,9 @@ func Test_JSONMarschal_JSONUnmarshal(t *testing.T) {
 
 func Test_Timings(t *testing.T) {
 
-	Convey("When created bf(20* 2**16, 3) populated with 2**16 words", t, func() {
-		n := 1 << 16       // 1024
-		bf := New(n*20, 3) // 20480 elements/3 locs
+	Convey("When created bf(10* 2**16, 7) populated with 2**16 words", t, func() {
+		n := 1 << 16
+		bf := New(float64(n*10), float64(7))
 
 		file, err := os.Open("words.txt")
 		if err != nil {
@@ -95,7 +95,7 @@ func Test_Timings(t *testing.T) {
 			st := time.Now()
 			repeats := int64(100)
 			for r := int64(0); r < repeats; r++ {
-				bf := New(n*20, 3)
+				bf := New(float64(n*20), float64(3))
 				for i, _ := range wordlist1 {
 					bf.Add(wordlist1[i])
 				}
@@ -129,8 +129,8 @@ func Test_Timings(t *testing.T) {
 
 func Test_bf_Distributions(t *testing.T) {
 	Convey("Test for wrong positivs in bf if there're 3 fields for each loc: len(bf)=9*2<<16, 3 Locs/entry. wordlist length = 2<<16 ", t, func() {
-		n := 2 << 6
-		bf := New(9*n, 3)
+		n := 1 << 16
+		bf := New(float64(n), float64(0.01))
 
 		file, err := os.Open("words.txt")
 		if err != nil {
@@ -165,7 +165,7 @@ func Test_bf_Distributions(t *testing.T) {
 
 			So(notIn, ShouldEqual, 0)
 
-			Convey("Wrong positivs < 4%: bf.Has(word) should be negativ for more than 96% of words not in wordlist1", nil)
+			Convey("Wrong positivs < 0.1%: bf.Has(word) should be negativ for more than 99.9% of words not in wordlist1", nil)
 
 			file, err := os.Open("words.txt")
 			if err != nil {
@@ -191,9 +191,14 @@ func Test_bf_Distributions(t *testing.T) {
 				log.Fatal(err)
 			}
 
-			So(float64(wrongIn)/float64(cnt), ShouldBeLessThan, 0.0401)
-			So(float64(wrongIn)/float64(cnt), ShouldBeLessThan, 0.0201)
-			So(float64(wrongIn)/float64(cnt), ShouldBeLessThan, 0.0101)
+			So(0.04, ShouldBeGreaterThan, float64(wrongIn)/float64(cnt))
+			So(0.02, ShouldBeGreaterThan, float64(wrongIn)/float64(cnt))
+			So(0.01, ShouldBeGreaterThan, float64(wrongIn)/float64(cnt))
+			So(0.005, ShouldBeGreaterThan, float64(wrongIn)/float64(cnt))
+			So(0.001, ShouldBeGreaterThan, float64(wrongIn)/float64(cnt))
+			// So(0.0005, ShouldBeGreaterThan, float64(wrongIn)/float64(cnt))
+			// So(0.0001, ShouldBeGreaterThan, float64(wrongIn)/float64(cnt))
+			log.Println(wrongIn, cnt)
 		})
 
 	})

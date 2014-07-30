@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"hash/fnv"
 	"log"
+	"math"
 )
 
 // bloom
@@ -19,7 +20,7 @@ type bloom interface {
 // helperfunction to calc ceil to the next base 2 power exponent for the bloom boolset-length
 // returns 2**exponent and exponent
 func getSize(ui64 uint64) (size uint64, exponent uint64) {
-	size = 1
+	size = uint64(1)
 	for size < ui64 {
 		size <<= 1
 		exponent++
@@ -27,9 +28,26 @@ func getSize(ui64 uint64) (size uint64, exponent uint64) {
 	return size, exponent
 }
 
+func calcSizeByWrongPositives(numEntries, wrongs float64) (uint64, uint64) {
+	size := -1 * numEntries * math.Log(wrongs) / math.Pow(float64(0.69314718056), 2)
+	locs := math.Ceil(float64(0.69314718056) * size / numEntries)
+	log.Println(size, locs)
+	return uint64(size), uint64(locs)
+}
+
 // New
 // returns a new bloom32/bloom64 bloomfilter
-func New(entries, locs int) (bloomfilter bloom) {
+func New(params ...float64) (bloomfilter bloom) {
+	var entries, locs uint64
+	if len(params) == 2 {
+		if params[1] < 1 {
+			entries, locs = calcSizeByWrongPositives(params[0], params[1])
+		} else {
+			entries, locs = uint64(params[0]), uint64(params[1])
+		}
+	} else {
+		log.Fatal("usage: New(float64(number_of_entries), float64(number_of_hashlocations)) i.e. New(float64(1000), float64(3)) or New(float64(number_of_entries), float64(number_of_hashlocations)) i.e. New(float64(1000), float64(0.03))")
+	}
 	size, exponent := getSize(uint64(entries))
 	switch exponent > 32 {
 	case true:
