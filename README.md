@@ -73,10 +73,14 @@ to work with the bloom filter.
 
 It's about 3 times faster than William Fitzgeralds real bitset bloom filter https://github.com/willf/bloom . 
 This comes at the cost of 8times greater memory usage for the 'bit'-set which is basically a []bool slice (even if it could be stored in smaller []uint8 JSON-Object). 
+You might get a bitset (instead of []bool) Bloom filter with a smaller memory footprint at https://github.com/AndreasBriese/bbloom (Note: bbloom uses the unsafe package)
 	
 	Bloom filter (filter size 524288, 7 hashlocs)
 	github.com/AndreasBriese/bloom 'Add' 65536 items (10 repetitions): 6304684 ns (96 ns/op)
 	github.com/AndreasBriese/bloom 'Has' 65536 items (10 repetitions): 6568663 ns (100 ns/op)
+	github.com/AndreasBriese/bbloom 'Add' 65536 items (10 repetitions): 6595800 ns (100 ns/op)
+	github.com/AndreasBriese/bbloom 'Has' 65536 items (10 repetitions): 5986600 ns (91 ns/op)
+	
 	github.com/willf/bloom 'Add' 65536 items (10 repetitions): 24367224 ns (371 ns/op)
 	github.com/willf/bloom 'Test' 65536 items (10 repetitions): 21881142 ns (333 ns/op)
 	github.com/dataence/bloom/standard 'Add' 65536 items (10 repetitions): 23041644 ns (351 ns/op)
