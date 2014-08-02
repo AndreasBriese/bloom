@@ -200,20 +200,20 @@ type bloom32 struct {
 // modified to fit with boolset-length
 // hash is casted to l, h = 16bit fragments
 // returns l,h
-func (bf bloom32) smdb(b []byte) (l, h uint32) {
-	hash := uint32(0)
-	for _, c := range b {
+func (bf bloom32) absdbm(b *[]byte) (l, h uint32) {
+	hash := uint32(len(*b))
+	for _, c := range *b {
 		hash = uint32(c) + (hash << 6) + (hash << bf.sizeExp) - hash
 	}
 	h = hash >> bf.shift
-	l = hash << bf.sizeExp >> bf.shift
+	l = hash << bf.sizeExp >> bf.sizeExp
 	return l, h
 }
 
 // Add
 // Add entry to Bloom filter
 func (bf bloom32) Add(entry []byte) {
-	l, h := bf.smdb(entry)
+	l, h := bf.absdbm(&entry)
 	for i := uint32(0); i < bf.setLocs; i++ {
 		bf.boolSet[(h+i*l)&bf.size] = true
 	}
@@ -222,7 +222,7 @@ func (bf bloom32) Add(entry []byte) {
 // Has
 // Check if entry had been added to Bloom filter
 func (bf bloom32) Has(entry []byte) bool {
-	l, h := bf.smdb(entry)
+	l, h := bf.absdbm(&entry)
 	for i := uint32(0); i < bf.setLocs; i++ {
 		switch bf.boolSet[(h+i*l)&bf.size] {
 		case false:
