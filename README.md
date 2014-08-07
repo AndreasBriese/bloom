@@ -76,17 +76,17 @@ This comes at the cost of 8times greater memory usage for the 'bit'-set which is
 You might get a bitset (instead of []bool) Bloom filter with a smaller memory footprint at https://github.com/AndreasBriese/bbloom (Note: bbloom uses the unsafe package)
 	
 	Bloom filter (filter size 524288, 7 hashlocs)
-	github.com/AndreasBriese/bloom 'Add' 65536 items (10 repetitions): 6304684 ns (96 ns/op)
-	github.com/AndreasBriese/bloom 'Has' 65536 items (10 repetitions): 6568663 ns (100 ns/op)
-	github.com/AndreasBriese/bbloom 'Add' 65536 items (10 repetitions): 6595800 ns (100 ns/op)
-	github.com/AndreasBriese/bbloom 'Has' 65536 items (10 repetitions): 5986600 ns (91 ns/op)
+	github.com/AndreasBriese/bloom 'Add' 65536 items (100 repetitions): 5656535 ns (86 ns/op)
+	github.com/AndreasBriese/bloom 'Has' 65536 items (100 repetitions): 5806509 ns (88 ns/op)
+	github.com/AndreasBriese/bbloom 'Add' 65536 items (100 repetitions): 4481291 ns (68 ns/op)
+	github.com/AndreasBriese/bbloom 'Has' 65536 items (100 repetitions): 4728276 ns (72 ns/op)
 	
-	github.com/willf/bloom 'Add' 65536 items (10 repetitions): 24367224 ns (371 ns/op)
-	github.com/willf/bloom 'Test' 65536 items (10 repetitions): 21881142 ns (333 ns/op)
-	github.com/dataence/bloom/standard 'Add' 65536 items (10 repetitions): 23041644 ns (351 ns/op)
-	github.com/dataence/bloom/standard 'Check' 65536 items (10 repetitions): 19153133 ns (292 ns/op)
-	github.com/cabello/bloom 'Add' 65536 items (10 repetitions): 131921507 ns (2012 ns/op)
-	github.com/cabello/bloom 'Contains' 65536 items (10 repetitions): 131108962 ns (2000 ns/op)
+	github.com/willf/bloom 'Add' 65536 items (100 repetitions): 23620537 ns (360 ns/op)
+	github.com/willf/bloom 'Test' 65536 items (100 repetitions): 22160548 ns (338 ns/op)
+	github.com/dataence/bloom/standard 'Add' 65536 items (100 repetitions): 22613773 ns (345 ns/op)
+	github.com/dataence/bloom/standard 'Check' 65536 items (100 repetitions): 18995579 ns (289 ns/op)
+	github.com/cabello/bloom 'Add' 65536 items (100 repetitions): 128564605 ns (1961 ns/op)
+	github.com/cabello/bloom 'Contains' 65536 items (100 repetitions): 127572465 ns (1946 ns/op)
 
 (on MBPro15 OSX10.8.5 i7 4Core 2.4Ghz)
 
